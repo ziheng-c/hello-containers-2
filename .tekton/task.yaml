@@ -24,7 +24,6 @@ spec:
         default: "https://cloud.ibm.com"
       - name: registryNamespace
         description: the ibmcloud registry namespace
-        default: "skaegi"
       - name: imageName
         description: the base image name
         default: "hello-containers-tekton"

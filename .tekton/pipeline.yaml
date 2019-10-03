@@ -12,6 +12,9 @@ spec:
       description: the git repo
     - name: apikey
       description: the ibmcloud api key
+    - name: registryNamespace
+      description: the ibmcloud registry namespace
+      default: "skaegi"
   tasks:
     - name: pipeline-build-task
       taskRef:
@@ -36,3 +39,5 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
+        - name: registryNamespace
+          value: $(params.registryNamespace)
