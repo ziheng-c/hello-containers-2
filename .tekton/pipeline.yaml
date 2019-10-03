@@ -17,6 +17,12 @@ spec:
       default: "skaegi"
     - name: cluster
       description: The IBM Cloud Kubernetes cluster name
+    - name: registryRegion
+      description: the ibmcloud registry region
+      default: us-south
+    - name: clusterRegion
+      description: The IBM Cloud Kubernetes cluster region
+      default: us-south
   tasks:
     - name: pipeline-build-task
       taskRef:
@@ -32,6 +38,8 @@ spec:
           value: $(params.apikey)
         - name: registryNamespace
           value: $(params.registryNamespace)
+        - name: registryRegion
+          value: $(params.registryRegion)          
     - name: pipeline-validate-task
       runAfter: [pipeline-build-task]
       taskRef:
@@ -56,3 +64,5 @@ spec:
           value: $(params.apikey)
         - name: cluster
           value: $(params.cluster)
+        - name: clusterRegion
+          value: $(params.clusterRegion)

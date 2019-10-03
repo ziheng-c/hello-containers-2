@@ -16,9 +16,6 @@ spec:
         default: master
       - name: apikey
         description: the ibmcloud api key
-      - name: region
-        description: the ibmcloud region
-        default: us-south
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
@@ -27,9 +24,8 @@ spec:
       - name: imageName
         description: the base image name
         default: "hello-containers-tekton"
-      - name: registryUrl
-        description: host name of the image registry
-        default: "us.icr.io"
+      - name: registryRegion
+        description: the ibmcloud registry region        
   steps:
     - name: clone-repo
       image: alpine/git
@@ -50,7 +46,7 @@ spec:
         - name: API
           value: $(inputs.params.api)
         - name: REGION
-          value: $(inputs.params.region)
+          value: $(inputs.params.registryRegion)
         - name: HOME
           value: "/root"
         - name: REGISTRY_NAMESPACE
@@ -80,8 +76,6 @@ spec:
           value: $(inputs.params.registryNamespace)
         - name: IMAGE_NAME
           value: $(inputs.params.imageName)
-        - name: REGISTRY_URL
-          value: $(inputs.params.registryUrl)
         - name: ARCHIVE_DIR
           value: "/artifacts"
         - name: BUILD_NUMBER
@@ -93,6 +87,7 @@ spec:
         - ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
+          export REGISTRY_URL=$(ibmcloud cr info | sed "2q;d" | awk '{for(i=1;i<=NF;i++) if ($i=="Registry") print $(i+1)}');
           source build-docker-image.sh;
       volumeMounts:
         - mountPath: /artifacts
@@ -177,9 +172,6 @@ spec:
         default: master
       - name: apikey
         description: the ibmcloud api key
-      - name: region
-        description: the ibmcloud region
-        default: us-south
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
@@ -189,6 +181,9 @@ spec:
         default: prod
       - name: cluster
         description: The IBM Cloud Kubernetes cluster name
+      - name: clusterRegion
+        description: The IBM Cloud Kubernetes cluster region
+        default: us-south
   steps:
     - name: clone-repo
       image: alpine/git
@@ -209,7 +204,7 @@ spec:
         - name: API
           value: $(inputs.params.api)
         - name: REGION
-          value: $(inputs.params.region)
+          value: $(inputs.params.clusterRegion)
         - name: HOME
           value: "/root"
         - name: DEPLOYMENT_FILE
@@ -235,7 +230,7 @@ spec:
         - name: API
           value: $(inputs.params.api)
         - name: REGION
-          value: $(inputs.params.region)
+          value: $(inputs.params.clusterRegion)
         - name: HOME
           value: "/root"
         - name: DEPLOYMENT_FILE
