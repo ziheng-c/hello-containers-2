@@ -29,7 +29,8 @@ spec:
         description: the base image name
         default: "hello-containers-tekton"
       - name: registryUrl
-        default: us.icr.io
+        description: host name of the image registry
+        default: "us.icr.io"
   steps:
     - name: clone-repo
       image: alpine/git
@@ -88,7 +89,6 @@ spec:
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
           export BUILD_NUMBER=0;
-          us.icr.io
           source build-docker-image.sh;
       volumeMounts:
         - mountPath: /step-mount
