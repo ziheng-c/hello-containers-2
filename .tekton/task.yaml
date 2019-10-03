@@ -22,6 +22,12 @@ spec:
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
+      - name: registryNamespace
+        description: the ibmcloud registry namespace
+        default: "https://cloud.ibm.com"
+      - name: imageName
+        description: the base image name
+        default: "hello-containers-tekton"
   steps:
     - name: clone-repo
       image: alpine/git
@@ -45,11 +51,15 @@ spec:
           value: $(inputs.params.region)
         - name: HOME
           value: "/root"
+        - name: REGISTRY_NAMESPACE
+          value: $(inputs.params.registryNamespace)
+        - name: IMAGE_NAME
+          value: $(inputs.params.imageName)
+
       command: ["/bin/sh", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
-          ibmcloud plugin list;
-          ls -la;
+          source pre-build-check.sh;
       volumeMounts:
         - mountPath: /step-mount
           name: task-volume
