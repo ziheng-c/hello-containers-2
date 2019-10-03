@@ -16,6 +16,12 @@ spec:
         default: master
       - name: apikey
         description: the ibmcloud api key
+      - name: region
+        description: the ibmcloud region
+        default: us-south
+      - name: api
+        description: the ibmcloud api endpoint
+        default: "https://cloud.ibm.com"
   steps:
     - name: clone-repo
       image: alpine/git
@@ -34,9 +40,9 @@ spec:
         - name: IBMCLOUD_API_KEY
           value: $(inputs.params.apikey)
         - name: API
-          value: "https://cloud.ibm.com"
+          value: $(inputs.params.apikey)
         - name: REGION
-          value: "us-south"
+          value: $(inputs.params.region)
         - name: HOME
           value: "/root"
       command: ["/bin/sh", "-c"]
