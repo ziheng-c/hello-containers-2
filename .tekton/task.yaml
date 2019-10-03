@@ -35,6 +35,8 @@ spec:
           value: $(inputs.params.apikey)
         - name: API
           value: "https://cloud.ibm.com"
+        - name: REGION
+          value: "us-south"
         - name: HOME
           value: "/root"
       command: ["/bin/sh", "-c"]
