@@ -161,9 +161,9 @@ spec:
           value: $(inputs.params.registryNamespace)
       command: ["/bin/bash", "-c"]
       args:
-        - cp /artifacts/build.properties .;
+        - ibmcloud login -a $API -r $REGION;
+          cp /artifacts/build.properties .;
           source check-vulnerabilities.sh;
-
       volumeMounts:
         - mountPath: /artifacts
           name: task-volume
