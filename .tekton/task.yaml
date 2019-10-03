@@ -48,6 +48,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
+          ibmcloud plugin list;
           ls -la;
       volumeMounts:
         - mountPath: /step-mount
