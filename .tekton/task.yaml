@@ -14,6 +14,8 @@ spec:
       - name: revision
         description: the revision
         default: master
+      - name: apikey
+        description: the ibmcloud api key
   steps:
     - name: clone-repo
       image: alpine/git
@@ -26,16 +28,19 @@ spec:
       args:
         - echo "Cloning $REPOSITORY";
           git clone -q -b $REVISION $REPOSITORY .;
-    - name: message-mount-write
-      image: alpine
+    - name: pre-build-check
+      image: ibmcom/pipeline-base-image
       env:
-        - name: message
-          value: $(inputs.params.message)
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: "https://cloud.ibm.com"
+        - name: HOME
+          value: "/root"
       command: ["/bin/sh", "-c"]
       args:
-        - ls -la;
-          ls -la /step-mount;
-          echo $message > /step-mount/message;
+        - ibmcloud login -a $API -r $REGION;
+          ls -la;
       volumeMounts:
         - mountPath: /step-mount
           name: task-volume
