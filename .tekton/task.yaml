@@ -83,15 +83,21 @@ spec:
           value: $(inputs.params.imageName)
         - name: REGISTRY_URL
           value: $(inputs.params.registryUrl)
+        - name: ARCHIVE_DIR
+          value: .
+        - name: BUILD_NUMBER
+          value: 0
+        - name: GIT_BRANCH
+          value: $(inputs.params.revision)
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
-          export BUILD_NUMBER=0;
           source build-docker-image.sh;
+          cp build.properties /artifacts
       volumeMounts:
-        - mountPath: /step-mount
+        - mountPath: /artifacts
           name: task-volume
   volumes:
     - name: task-volume
@@ -107,20 +113,15 @@ spec:
     params:
       - name: task-pvc
         description: the task pvc
-      - name: message
-        description: the message
   steps:
-    - name: message-mount-write
+    - name: read-build-properties
       image: alpine
-      env:
-        - name: message
-          value: $(inputs.params.message)
       command: ["/bin/sh", "-c"]
       args:
-        - ls -la /step-mount;
-          echo $message > /step-mount/message;
+        - ls -la /artifacts;
+          cat /artifacts/build.properties
       volumeMounts:
-        - mountPath: /step-mount
+        - mountPath: /artifacts
           name: task-volume
   volumes:
     - name: task-volume
