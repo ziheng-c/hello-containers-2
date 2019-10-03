@@ -59,6 +59,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
+          cat ~/.bashrc;
           source ~/.bashrc;
           env;
           source pre-build-check.sh;
