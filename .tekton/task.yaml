@@ -153,6 +153,7 @@ spec:
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           source check-vulnerabilities.sh;
+          echo status code - $?;
       volumeMounts:
         - mountPath: /artifacts
           name: task-volume

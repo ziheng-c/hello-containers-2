@@ -13,7 +13,6 @@
 #   limitations under the License.
 
 FROM node:alpine
-MAINTAINER Philippe Mulet "philippe_mulet@fr.ibm.com"
 
 RUN apk update && apk upgrade
 # Install the application
