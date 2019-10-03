@@ -146,9 +146,8 @@ spec:
       args:
         - echo "Cloning $REPOSITORY";
           git clone -q -b $REVISION $REPOSITORY .;
-    - name: read-build-properties
-      image: alpine
-      command: ["/bin/sh", "-c"]
+    - name: check-vulnerabilities
+      image: ibmcom/pipeline-base-image
       env:
         - name: IBMCLOUD_API_KEY
           value: $(inputs.params.apikey)
@@ -160,8 +159,9 @@ spec:
           value: "/root"
         - name: REGISTRY_NAMESPACE
           value: $(inputs.params.registryNamespace)
+      command: ["/bin/sh", "-c"]
       args:
-        - source /artifacts/build.properties;
+        - cp /artifacts/build.properties .;
           source check-vulnerabilities.sh;
 
       volumeMounts:
