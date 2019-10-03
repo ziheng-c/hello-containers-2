@@ -59,7 +59,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
-          source pre-build-check.sh;
+          source ./pre-build-check.sh;
       volumeMounts:
         - mountPath: /step-mount
           name: task-volume
