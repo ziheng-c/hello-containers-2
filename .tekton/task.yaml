@@ -56,10 +56,10 @@ spec:
         - name: IMAGE_NAME
           value: $(inputs.params.imageName)
 
-      command: ["/bin/sh", "-c"]
+      command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
-          source ./pre-build-check.sh;
+          source pre-build-check.sh;
       volumeMounts:
         - mountPath: /step-mount
           name: task-volume
