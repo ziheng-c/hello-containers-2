@@ -15,7 +15,7 @@ spec:
         description: the revision
         default: master
   steps:
-    - name: clone repo
+    - name: clone-repo
       image: alpine/git
       env:
         - name: REPOSITORY
