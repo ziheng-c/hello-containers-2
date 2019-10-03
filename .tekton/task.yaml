@@ -1,0 +1,53 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: write-task
+spec:
+  inputs:
+    params:
+      - name: task-pvc
+        description: the task pvc
+      - name: message
+        description: the message
+  steps:
+    - name: message-mount-write
+      image: alpine
+      env:
+        - name: message
+          value: $(inputs.params.message)
+      command: ["/bin/sh", "-c"]
+      args:
+        - ls -la /step-mount;
+          echo $message > /step-mount/message;
+      volumeMounts:
+        - mountPath: /step-mount
+          name: task-volume
+  volumes:
+    - name: task-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.task-pvc)
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: read-task
+spec:
+  inputs:
+    params:
+      - name: task-pvc
+        description: the task pvc
+  steps:
+    - name: message-mount-read
+      image: alpine
+      command: ["/bin/sh", "-c"]
+      args:
+        - ls -la /step-mount;
+          cat /step-mount/message;
+      volumeMounts:
+        - mountPath: /step-mount
+          name: task-volume
+  volumes:
+    - name: task-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.task-pvc)
+      

@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: pipeline
+spec:
+  params:
+    - name: pipeline-pvc
+      description: the pipeline pvc name
+    - name: message
+      description: the message
+  tasks:
+    - name: pipeline-write-task
+      taskRef:
+        name: write-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: message
+          value: $(params.message)
+    - name: pipeline-read-task
+      runAfter: [pipeline-write-task]
+      taskRef:
+        name: read-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
