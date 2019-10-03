@@ -15,6 +15,8 @@ spec:
     - name: registryNamespace
       description: the ibmcloud registry namespace
       default: "skaegi"
+    - name: cluster
+      description: The IBM Cloud Kubernetes cluster name
   tasks:
     - name: pipeline-build-task
       taskRef:
@@ -51,4 +53,6 @@ spec:
         - name: repository
           value: $(params.repository)
         - name: apikey
-          value: $(params.apikey) 
+          value: $(params.apikey)
+        - name: cluster
+          value: $(params.cluster)

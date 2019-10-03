@@ -183,6 +183,12 @@ spec:
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
+      - name: deployment-file
+        default: deployment.yml
+      - name: cluster-namespace
+        default: prod
+      - name: cluster
+        description: The IBM Cloud Kubernetes cluster name
   steps:
     - name: clone-repo
       image: alpine/git
@@ -206,6 +212,12 @@ spec:
           value: $(inputs.params.region)
         - name: HOME
           value: "/root"
+        - name: DEPLOYMENT_FILE
+          value: $(inputs.params.deployment-file)
+        - name: CLUSTER_NAMESPACE
+          value: $(inputs.params.cluster-namespace)
+        - name: PIPELINE_KUBERNETES_CLUSTER_NAME
+          value: $(inputs.params.cluster)
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
@@ -226,6 +238,12 @@ spec:
           value: $(inputs.params.region)
         - name: HOME
           value: "/root"
+        - name: DEPLOYMENT_FILE
+          value: $(inputs.params.deployment-file)
+        - name: CLUSTER_NAMESPACE
+          value: $(inputs.params.cluster-namespace)
+        - name: PIPELINE_KUBERNETES_CLUSTER_NAME
+          value: $(inputs.params.cluster)
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
