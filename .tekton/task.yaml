@@ -83,6 +83,8 @@ spec:
           value: $(inputs.params.imageName)
         - name: REGISTRY_URL
           value: $(inputs.params.registryUrl)
+        - name: ARCHIVE_DIR
+          value: "/artifacts"
         - name: BUILD_NUMBER
           value: "0"
         - name: GIT_BRANCH
@@ -93,7 +95,6 @@ spec:
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
           source build-docker-image.sh;
-          cp build.properties /artifacts
       volumeMounts:
         - mountPath: /artifacts
           name: task-volume
@@ -116,8 +117,8 @@ spec:
       image: alpine
       command: ["/bin/sh", "-c"]
       args:
-        - ls -la /artifacts;
-          echo "alive"
+        - echo starting;
+          ls -la /artifacts;
           cat /artifacts/build.properties
       volumeMounts:
         - mountPath: /artifacts
