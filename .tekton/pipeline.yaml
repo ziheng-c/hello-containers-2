@@ -41,3 +41,14 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
+    - name: pipeline-deploy-task
+      runAfter: [pipeline-validate-task]
+      taskRef:
+        name: deploy-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: repository
+          value: $(params.repository)
+        - name: apikey
+          value: $(params.apikey) 
