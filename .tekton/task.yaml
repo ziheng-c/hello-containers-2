@@ -112,14 +112,42 @@ spec:
     params:
       - name: task-pvc
         description: the task pvc
+      - name: apikey
+        description: the ibmcloud api key
+      - name: region
+        description: the ibmcloud region
+        default: us-south
+      - name: api
+        description: the ibmcloud api endpoint
+        default: "https://cloud.ibm.com"
+      - name: registryNamespace
+        description: the ibmcloud registry namespace
+        default: "skaegi"
+      - name: imageName
+        description: the base image name
+        default: "hello-containers-tekton"
+      - name: registryUrl
+        description: host name of the image registry
+        default: "us.icr.io"
   steps:
     - name: read-build-properties
       image: alpine
       command: ["/bin/sh", "-c"]
+      env:
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: $(inputs.params.api)
+        - name: REGION
+          value: $(inputs.params.region)
+        - name: HOME
+          value: "/root"
+        - name: REGISTRY_NAMESPACE
+          value: $(inputs.params.registryNamespace)
       args:
-        - echo starting;
-          ls -la /artifacts;
-          cat /artifacts/build.properties
+        - source /artifacts/build.properties;
+          source check-vulnerabilities.sh;
+
       volumeMounts:
         - mountPath: /artifacts
           name: task-volume
