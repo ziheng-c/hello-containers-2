@@ -159,7 +159,7 @@ spec:
           value: "/root"
         - name: REGISTRY_NAMESPACE
           value: $(inputs.params.registryNamespace)
-      command: ["/bin/sh", "-c"]
+      command: ["/bin/bash", "-c"]
       args:
         - cp /artifacts/build.properties .;
           source check-vulnerabilities.sh;
