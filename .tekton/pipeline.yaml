@@ -13,7 +13,7 @@ spec:
     - name: apikey
       description: the ibmcloud api key
   tasks:
-    - name: pipeline-write-task
+    - name: pipeline-build-task
       taskRef:
         name: build-task
       params:
@@ -25,10 +25,10 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
-    - name: pipeline-read-task
-      runAfter: [pipeline-write-task]
+    - name: pipeline-validate-task
+      runAfter: [pipeline-build-task]
       taskRef:
-        name: read-task
+        name: validate-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
