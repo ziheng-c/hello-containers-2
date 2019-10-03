@@ -51,6 +51,8 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
+        - name: registryRegion
+          value: $(params.registryRegion)           
     - name: pipeline-deploy-task
       runAfter: [pipeline-validate-task]
       taskRef:

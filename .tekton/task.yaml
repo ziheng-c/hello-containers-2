@@ -69,7 +69,7 @@ spec:
         - name: API
           value: $(inputs.params.api)
         - name: REGION
-          value: $(inputs.params.region)
+          value: $(inputs.params.registryRegion)
         - name: HOME
           value: "/root"
         - name: REGISTRY_NAMESPACE
@@ -112,12 +112,11 @@ spec:
         default: master
       - name: apikey
         description: the ibmcloud api key
-      - name: region
-        description: the ibmcloud region
-        default: us-south
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
+      - name: registryRegion
+        description: the ibmcloud registry region           
   steps:
     - name: clone-repo
       image: alpine/git
@@ -137,10 +136,10 @@ spec:
           value: $(inputs.params.apikey)
         - name: API
           value: $(inputs.params.api)
-        - name: REGION
-          value: $(inputs.params.region)
         - name: HOME
           value: "/root"
+        - name: REGION
+          value: $(inputs.params.registryRegion)
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
@@ -182,7 +181,6 @@ spec:
         description: The IBM Cloud Kubernetes cluster name
       - name: clusterRegion
         description: The IBM Cloud Kubernetes cluster region
-        default: us-south
   steps:
     - name: clone-repo
       image: alpine/git
