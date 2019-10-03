@@ -162,6 +162,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
+          while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           source check-vulnerabilities.sh;
       volumeMounts:
