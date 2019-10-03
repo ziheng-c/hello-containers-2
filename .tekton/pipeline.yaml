@@ -28,6 +28,8 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
+        - name: registryNamespace
+          value: $(params.registryNamespace)
     - name: pipeline-validate-task
       runAfter: [pipeline-build-task]
       taskRef:
@@ -39,5 +41,3 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
-        - name: registryNamespace
-          value: $(params.registryNamespace)
