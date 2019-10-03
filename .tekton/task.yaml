@@ -24,7 +24,7 @@ spec:
         default: "https://cloud.ibm.com"
       - name: registryNamespace
         description: the ibmcloud registry namespace
-        default: "https://cloud.ibm.com"
+        default: "skaegi"
       - name: imageName
         description: the base image name
         default: "hello-containers-tekton"
@@ -59,6 +59,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
+          env;
           source pre-build-check.sh;
       volumeMounts:
         - mountPath: /step-mount
