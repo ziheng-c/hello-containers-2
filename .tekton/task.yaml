@@ -5,7 +5,7 @@ metadata:
 spec:
   inputs:
     params:
-      - name: output-pvc
+      - name: task-pvc
         description: the output pvc
       - name: message
         description: the message
