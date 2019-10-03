@@ -24,7 +24,8 @@ spec:
           value: $(inputs.params.revision)
       command: ["/bin/sh", "-c"]
       args:
-        - git clone -q -b $REVISION $REPOSITORY;
+        - echo "Cloning $REPOSITORY";
+          git clone -q -b $REVISION $REPOSITORY;
     - name: message-mount-write
       image: alpine
       env:
