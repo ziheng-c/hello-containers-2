@@ -11,7 +11,9 @@ spec:
       description: The git repo
       default: "https://github.com/skaegi/hello-containers"
     - name: apikey
-      description: the ibmcloud api key 
+      description: the ibmcloud api key
+    - name: registryNamespace
+      description: the ibmcloud registry namespace
   resourcetemplates:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
@@ -29,6 +31,8 @@ spec:
           value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
+        - name: registryNamespace
+          value: $(params.registryNamespace)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerBinding
