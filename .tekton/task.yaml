@@ -82,6 +82,7 @@ spec:
       args:
         - ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
+          env;
           source build-docker-image.sh;
       volumeMounts:
         - mountPath: /step-mount
