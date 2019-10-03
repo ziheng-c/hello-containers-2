@@ -112,6 +112,11 @@ spec:
     params:
       - name: task-pvc
         description: the task pvc
+      - name: repository
+        description: the git repo
+      - name: revision
+        description: the revision
+        default: master
       - name: apikey
         description: the ibmcloud api key
       - name: region
@@ -130,6 +135,17 @@ spec:
         description: host name of the image registry
         default: "us.icr.io"
   steps:
+    - name: clone-repo
+      image: alpine/git
+      env:
+        - name: REPOSITORY
+          value: $(inputs.params.repository)
+        - name: REVISION
+          value: $(inputs.params.revision)
+      command: ["/bin/sh", "-c"]
+      args:
+        - echo "Cloning $REPOSITORY";
+          git clone -q -b $REVISION $REPOSITORY .;
     - name: read-build-properties
       image: alpine
       command: ["/bin/sh", "-c"]
