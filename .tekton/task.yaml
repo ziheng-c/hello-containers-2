@@ -83,8 +83,6 @@ spec:
           value: $(inputs.params.imageName)
         - name: REGISTRY_URL
           value: $(inputs.params.registryUrl)
-        - name: ARCHIVE_DIR
-          value: "."
         - name: BUILD_NUMBER
           value: "0"
         - name: GIT_BRANCH
@@ -119,6 +117,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - ls -la /artifacts;
+          echo "alive"
           cat /artifacts/build.properties
       volumeMounts:
         - mountPath: /artifacts
