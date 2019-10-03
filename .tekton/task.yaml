@@ -125,15 +125,6 @@ spec:
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
-      - name: registryNamespace
-        description: the ibmcloud registry namespace
-        default: "skaegi"
-      - name: imageName
-        description: the base image name
-        default: "hello-containers-tekton"
-      - name: registryUrl
-        description: host name of the image registry
-        default: "us.icr.io"
   steps:
     - name: clone-repo
       image: alpine/git
@@ -193,15 +184,6 @@ spec:
       - name: api
         description: the ibmcloud api endpoint
         default: "https://cloud.ibm.com"
-      - name: registryNamespace
-        description: the ibmcloud registry namespace
-        default: "skaegi"
-      - name: imageName
-        description: the base image name
-        default: "hello-containers-tekton"
-      - name: registryUrl
-        description: host name of the image registry
-        default: "us.icr.io"
   steps:
     - name: clone-repo
       image: alpine/git
