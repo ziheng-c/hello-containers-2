@@ -1,6 +1,51 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
+  name: build-task
+spec:
+  inputs:
+    params:
+      - name: output-pvc
+        description: the output pvc
+      - name: message
+        description: the message
+      - name: repository
+        description: the git repo
+      - name: revision
+        description: the revision
+        default: master
+  steps:
+    - name: clone repo
+      image: alpine/git
+      env:
+        - name: REPOSITORY
+          value: $(params.repository)
+        - name: REVISION
+          value: $(params.revision)
+      command: ["/bin/sh", "-c"]
+      args:
+        - git clone -q -b $REVISION $REPOSITORY;
+    - name: message-mount-write
+      image: alpine
+      env:
+        - name: message
+          value: $(inputs.params.message)
+      command: ["/bin/sh", "-c"]
+      args:
+        - ls -la;
+          ls -la /step-mount;
+          echo $message > /step-mount/message;
+      volumeMounts:
+        - mountPath: /step-mount
+          name: task-volume
+  volumes:
+    - name: task-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.task-pvc)
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
   name: write-task
 spec:
   inputs:
