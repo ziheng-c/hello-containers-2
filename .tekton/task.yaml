@@ -214,6 +214,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
+          $(ibmcloud ks cluster config --cluster "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --export)
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           source pre-deploy-check.sh;
@@ -240,6 +241,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - ibmcloud login -a $API -r $REGION;
+          $(ibmcloud ks cluster config --cluster "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --export)
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           source deploy-to-kubernetes.sh;
