@@ -22,6 +22,9 @@ spec:
     - name: clusterRegion
       description: The IBM Cloud Kubernetes cluster region
       default: us-south
+    - name: clusterNamespace
+      description: The Kubernetes cluster namespace
+      default: prod
   resourcetemplates:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
@@ -47,6 +50,8 @@ spec:
           value: $(params.cluster)
         - name: clusterRegion
           value: $(params.clusterRegion)
+        - name: clusterNamespace
+          value: $(params.clusterNamespace)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerBinding

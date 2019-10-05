@@ -23,6 +23,9 @@ spec:
     - name: clusterRegion
       description: The IBM Cloud Kubernetes cluster region
       default: us-south
+    - name: clusterNamespace
+        description: The Kubernetes cluster namespace
+        default: prod
   tasks:
     - name: pipeline-build-task
       taskRef:
@@ -68,3 +71,5 @@ spec:
           value: $(params.cluster)
         - name: clusterRegion
           value: $(params.clusterRegion)
+        - name: clusterNamespace
+          value: $(params.clusterNamespace)

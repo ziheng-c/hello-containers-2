@@ -176,7 +176,7 @@ spec:
         default: "https://cloud.ibm.com"
       - name: deployment-file
         default: deployment.yml
-      - name: cluster-namespace
+      - name: clusterNamespace
         default: prod
       - name: cluster
         description: The IBM Cloud Kubernetes cluster name
@@ -208,7 +208,7 @@ spec:
         - name: DEPLOYMENT_FILE
           value: $(inputs.params.deployment-file)
         - name: CLUSTER_NAMESPACE
-          value: $(inputs.params.cluster-namespace)
+          value: $(inputs.params.clusterNamespace)
         - name: PIPELINE_KUBERNETES_CLUSTER_NAME
           value: $(inputs.params.cluster)
       command: ["/bin/bash", "-c"]
@@ -235,7 +235,7 @@ spec:
         - name: DEPLOYMENT_FILE
           value: $(inputs.params.deployment-file)
         - name: CLUSTER_NAMESPACE
-          value: $(inputs.params.cluster-namespace)
+          value: $(inputs.params.clusterNamespace)
         - name: PIPELINE_KUBERNETES_CLUSTER_NAME
           value: $(inputs.params.cluster)
       command: ["/bin/bash", "-c"]
