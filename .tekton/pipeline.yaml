@@ -24,8 +24,8 @@ spec:
       description: The IBM Cloud Kubernetes cluster region
       default: us-south
     - name: clusterNamespace
-        description: The Kubernetes cluster namespace
-        default: prod
+      description: The Kubernetes cluster namespace
+      default: prod
   tasks:
     - name: pipeline-build-task
       taskRef:
