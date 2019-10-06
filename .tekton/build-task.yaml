@@ -64,14 +64,13 @@ spec:
           value: "/pipeline/artifacts"
         - name: BUILD_NUMBER
           value: "0"
-        - name: GIT_BRANCH
-          value: $(inputs.params.revision)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
           ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
+          export GIT_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
           export REGISTRY_URL=$(ibmcloud cr info | sed "2q;d" | awk '{for(i=1;i<=NF;i++) if ($i=="Registry") print $(i+1)}');
           source build-docker-image.sh;
       volumeMounts:
