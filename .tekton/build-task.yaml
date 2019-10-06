@@ -40,12 +40,12 @@ spec:
         - set -e -o pipefail;
           cp -r /pipeline/repo/* .;
           ls -al ~;
-          ls -al ~/.bluemix
-          ls -al ~/.config
+          ls -al ~/.bluemix;
+          ls -al ~/.config;
           ibmcloud login -a $API -r $REGION;
           ls -al ~;
-          ls -al ~/.bluemix
-          ls -al ~/.config
+          ls -al ~/.bluemix;
+          ls -al ~/.config;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           source pre-build-check.sh;
       volumeMounts:
