@@ -33,7 +33,7 @@ spec:
         - name: pvc-name
           value: $(params.pipeline-pvc)
         - name: pvc-sub-path
-          value: "/repo"
+          value: "repo"
     - name: pipeline-build-task
       runAfter: [pipeline-clone-task]
       taskRef:
