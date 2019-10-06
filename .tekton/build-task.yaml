@@ -38,7 +38,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          cp -r /pipeline/repo/ .;
+          cp -r /pipeline/repo/* .;
           ls -al;
           pwd;
           ibmcloud login -a $API -r $REGION;
