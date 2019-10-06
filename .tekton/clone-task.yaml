@@ -31,7 +31,7 @@ spec:
       volumeMounts:
         - mountPath: /dest
           name: clone-volume
-          subPath: $(inputs.params.clone-path)
+          subPath: $(inputs.params.pvc-sub-path)
   volumes:
     - name: clone-volume
       persistentVolumeClaim:
