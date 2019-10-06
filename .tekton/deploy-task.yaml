@@ -41,7 +41,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          cp -r /pipeline/repo/ .
+          cp -r /pipeline/repo/ .;
           cp /pipeline/artifacts/build.properties .;
           while read line; do export $line; done < build.properties;
           ibmcloud login -a $API -r $REGION;
