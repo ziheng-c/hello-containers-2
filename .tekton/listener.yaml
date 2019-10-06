@@ -36,8 +36,6 @@ spec:
         params:
         - name: pipeline-pvc
           value: pipelinerun-$(uid)-pvc
-        - name: message
-          value: $(params.message)
         - name: repository
           value: $(params.repository)
         - name: apikey
