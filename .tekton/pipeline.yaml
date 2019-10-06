@@ -28,10 +28,12 @@ spec:
       taskRef:
         name: clone-task
       params:
-        - name: pipeline-pvc
-          value: $(params.pipeline-pvc)
         - name: repository
           value: $(params.repository)
+        - name: pvc-name
+          value: $(params.pipeline-pvc)
+        - name: pvc-sub-path
+          value: "/repo"
     - name: pipeline-build-task
       runAfter: [pipeline-clone-task]
       taskRef:

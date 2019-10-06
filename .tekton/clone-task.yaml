@@ -5,13 +5,16 @@ metadata:
 spec:
   inputs:
     params:
-      - name: pipeline-pvc
-        description: the output pvc
       - name: repository
         description: the git repo
       - name: revision
         description: the revision
-        default: master    
+        default: master  
+      - name: pvc-name
+        description: the output pvc
+      - name: pvc-sub-path
+        description: the path where the repo should be cloned
+        default: ""  
   steps:
     - name: clone-repo
       image: alpine/git
@@ -24,12 +27,12 @@ spec:
       args:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
-          git clone -q -b $REVISION $REPOSITORY /pipeline/repo;
-          ls -al /pipeline/repo;
+          git clone -q -b $REVISION $REPOSITORY /dest;
       volumeMounts:
-        - mountPath: /pipeline
-          name: pipeline-volume
+        - mountPath: /dest
+          name: clone-volume
+          subPath: $(inputs.params.clone-path)
   volumes:
-    - name: pipeline-volume
+    - name: clone-volume
       persistentVolumeClaim:
-        claimName: $(inputs.params.pipeline-pvc)
+        claimName: $(inputs.params.pvc-name)
