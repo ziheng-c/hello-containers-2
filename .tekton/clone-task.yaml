@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: clone-task
+spec:
+  inputs:
+    params:
+      - name: pipeline-pvc
+        description: the output pvc
+      - name: repository
+        description: the git repo
+      - name: revision
+        description: the revision
+        default: master    
+  steps:
+    - name: clone-repo
+      image: alpine/git
+      env:
+        - name: REPOSITORY
+          value: $(inputs.params.repository)
+        - name: REVISION
+          value: $(inputs.params.revision)
+      command: ["/bin/sh", "-c"]
+      args:
+        - set -e -o pipefail;
+          echo "Cloning $REPOSITORY";
+          git clone -q -b $REVISION $REPOSITORY /pipeline/repo;
+      volumeMounts:
+        - mountPath: /pipeline
+          name: pipeline-volume
+  volumes:
+    - name: pipeline-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.pipeline-pvc)

@@ -1,0 +1,85 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: deploy-task
+spec:
+  inputs:
+    params:
+      - name: pipeline-pvc
+        description: the task pvc
+      - name: repository
+        description: the git repo
+      - name: revision
+        description: the revision
+        default: master
+      - name: apikey
+        description: the ibmcloud api key
+      - name: api
+        description: the ibmcloud api endpoint
+        default: "https://cloud.ibm.com"
+      - name: deployment-file
+        default: deployment.yml
+      - name: clusterNamespace
+        default: prod
+      - name: cluster
+        description: The IBM Cloud Kubernetes cluster name
+      - name: clusterRegion
+        description: The IBM Cloud Kubernetes cluster region
+  steps:
+    - name: pre-deploy-check
+      image: ibmcom/pipeline-base-image
+      env:
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: $(inputs.params.api)
+        - name: REGION
+          value: $(inputs.params.clusterRegion)
+        - name: HOME
+          value: "/root"
+        - name: DEPLOYMENT_FILE
+          value: $(inputs.params.deployment-file)
+        - name: CLUSTER_NAMESPACE
+          value: $(inputs.params.clusterNamespace)
+        - name: PIPELINE_KUBERNETES_CLUSTER_NAME
+          value: $(inputs.params.cluster)
+      command: ["/bin/bash", "-c"]
+      args:
+        - set -e -o pipefail;
+          cp -r /pipeline/repo/ .
+          cp /pipeline/artifacts/build.properties .;
+          while read line; do export $line; done < build.properties;
+          ibmcloud login -a $API -r $REGION;
+          $(ibmcloud ks cluster config --cluster "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --export);
+          source pre-deploy-check.sh;
+      volumeMounts:
+        - mountPath: /pipeline
+          name: pipeline-volume
+    - name: deploy-to-kubernetes
+      image: ibmcom/pipeline-base-image
+      env:
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: $(inputs.params.api)
+        - name: REGION
+          value: $(inputs.params.clusterRegion)
+        - name: HOME
+          value: "/root"
+        - name: DEPLOYMENT_FILE
+          value: $(inputs.params.deployment-file)
+        - name: CLUSTER_NAMESPACE
+          value: $(inputs.params.clusterNamespace)
+        - name: PIPELINE_KUBERNETES_CLUSTER_NAME
+          value: $(inputs.params.cluster)
+      command: ["/bin/bash", "-c"]
+      args:
+        - set -e -o pipefail;
+          while read line; do export $line; done < build.properties;
+          ibmcloud login -a $API -r $REGION;
+          $(ibmcloud ks cluster config --cluster "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --export);
+          source deploy-to-kubernetes.sh;
+  volumes:
+    - name: pipeline-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.pipeline-pvc)

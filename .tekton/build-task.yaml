@@ -1,0 +1,83 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-task
+spec:
+  inputs:
+    params:
+      - name: pipeline-pvc
+        description: the output pvc
+      - name: apikey
+        description: the ibmcloud api key
+      - name: api
+        description: the ibmcloud api endpoint
+        default: "https://cloud.ibm.com"
+      - name: registryNamespace
+        description: the ibmcloud registry namespace
+      - name: imageName
+        description: the base image name
+        default: "hello-containers-tekton"
+      - name: registryRegion
+        description: the ibmcloud registry region        
+  steps:
+    - name: pre-build-check
+      image: ibmcom/pipeline-base-image
+      env:
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: $(inputs.params.api)
+        - name: REGION
+          value: $(inputs.params.registryRegion)
+        - name: HOME
+          value: "/root"
+        - name: REGISTRY_NAMESPACE
+          value: $(inputs.params.registryNamespace)
+        - name: IMAGE_NAME
+          value: $(inputs.params.imageName)
+      command: ["/bin/bash", "-c"]
+      args:
+        - set -e -o pipefail;
+          cp -r /pipeline/repo/ .
+          ibmcloud login -a $API -r $REGION;
+          export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
+          source pre-build-check.sh;
+      volumeMounts:
+        - mountPath: /pipeline
+          name: pipeline-volume
+    - name: build-docker-image
+      image: ibmcom/pipeline-base-image
+      env:
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: $(inputs.params.api)
+        - name: REGION
+          value: $(inputs.params.registryRegion)
+        - name: HOME
+          value: "/root"
+        - name: REGISTRY_NAMESPACE
+          value: $(inputs.params.registryNamespace)
+        - name: IMAGE_NAME
+          value: $(inputs.params.imageName)
+        - name: ARCHIVE_DIR
+          value: "/pipeline/artifacts"
+        - name: BUILD_NUMBER
+          value: "0"
+        - name: GIT_BRANCH
+          value: $(inputs.params.revision)
+      command: ["/bin/bash", "-c"]
+      args:
+        - set -e -o pipefail;
+          ibmcloud login -a $API -r $REGION;
+          export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
+          export GIT_COMMIT=$(git rev-parse HEAD);
+          export REGISTRY_URL=$(ibmcloud cr info | sed "2q;d" | awk '{for(i=1;i<=NF;i++) if ($i=="Registry") print $(i+1)}');
+          source build-docker-image.sh;
+      volumeMounts:
+        - mountPath: /pipeline
+          name: pipeline-volume
+  volumes:
+    - name: pipeline-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.pipeline-pvc)

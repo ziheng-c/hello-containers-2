@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: validate-task
+spec:
+  inputs:
+    params:
+      - name: pipeline-pvc
+        description: the task pvc
+      - name: apikey
+        description: the ibmcloud api key
+      - name: api
+        description: the ibmcloud api endpoint
+        default: "https://cloud.ibm.com"       
+  steps:
+    - name: check-vulnerabilities
+      image: ibmcom/pipeline-base-image
+      env:
+        - name: IBMCLOUD_API_KEY
+          value: $(inputs.params.apikey)
+        - name: API
+          value: $(inputs.params.api)
+        - name: HOME
+          value: "/root"
+      command: ["/bin/bash", "-c"]
+      args:
+        - set -e -o pipefail;
+          cp -r /pipeline/repo/ .
+          cp /pipeline/artifacts/build.properties .;
+          while read line; do export $line; done < /artifacts/build.properties;
+          ibmcloud login -a $API -r $REGION;
+          source check-vulnerabilities.sh || true;
+      volumeMounts:
+        - mountPath: /pipeline
+          name: pipeline-volume
+  volumes:
+    - name: pipeline-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.pipeline-pvc)
