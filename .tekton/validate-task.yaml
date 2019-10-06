@@ -27,7 +27,7 @@ spec:
         - set -e -o pipefail;
           cp -r /pipeline/repo/* .;
           cp /pipeline/artifacts/build.properties .;
-          while read line; do export $line; done < /artifacts/build.properties;
+          while read line; do export $line; done < build.properties;
           ibmcloud login -a $API -r $REGION;
           source check-vulnerabilities.sh || true;
       volumeMounts:
