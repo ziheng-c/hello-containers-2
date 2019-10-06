@@ -39,6 +39,8 @@ spec:
       args:
         - set -e -o pipefail;
           cp -r /pipeline/repo/ .;
+          ls -al;
+          pwd;
           ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           source pre-build-check.sh;

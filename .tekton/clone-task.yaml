@@ -25,6 +25,7 @@ spec:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
           git clone -q -b $REVISION $REPOSITORY /pipeline/repo;
+          ls -al /pipeline/repo;
       volumeMounts:
         - mountPath: /pipeline
           name: pipeline-volume
