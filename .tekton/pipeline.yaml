@@ -53,9 +53,7 @@ spec:
         - name: pipeline-pvc
           value: $(params.pipeline-pvc)
         - name: apikey
-          value: $(params.apikey)
-        - name: registryRegion
-          value: $(params.registryRegion)           
+          value: $(params.apikey)        
     - name: pipeline-deploy-task
       runAfter: [pipeline-validate-task]
       taskRef:
