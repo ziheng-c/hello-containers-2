@@ -6,8 +6,6 @@ spec:
   params:
     - name: pipeline-pvc
       description: the pipeline pvc name
-    - name: message
-      description: the message
     - name: repository
       description: the git repo
     - name: apikey
@@ -27,16 +25,21 @@ spec:
       description: The Kubernetes cluster namespace
       default: prod
   tasks:
+    - name: pipeline-clone-task
+      taskRef:
+        name: clone-task
+      params:
+        - name: pipeline-pvc
+          value: $(params.pipeline-pvc)
+        - name: repository
+          value: $(params.repository)
     - name: pipeline-build-task
+      runAfter: [pipeline-clone-task]
       taskRef:
         name: build-task
       params:
-        - name: task-pvc
+        - name: pipeline-pvc
           value: $(params.pipeline-pvc)
-        - name: message
-          value: $(params.message)
-        - name: repository
-          value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
         - name: registryNamespace
@@ -48,10 +51,8 @@ spec:
       taskRef:
         name: validate-task
       params:
-        - name: task-pvc
+        - name: pipeline-pvc
           value: $(params.pipeline-pvc)
-        - name: repository
-          value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
         - name: registryRegion
@@ -61,10 +62,8 @@ spec:
       taskRef:
         name: deploy-task
       params:
-        - name: task-pvc
+        - name: pipeline-pvc
           value: $(params.pipeline-pvc)
-        - name: repository
-          value: $(params.repository)
         - name: apikey
           value: $(params.apikey)
         - name: cluster

@@ -1,19 +1,47 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: build-task
+  name: clone-task
 spec:
   inputs:
     params:
-      - name: task-pvc
+      - name: pipeline-pvc
         description: the output pvc
-      - name: message
-        description: the message
       - name: repository
         description: the git repo
       - name: revision
         description: the revision
-        default: master
+        default: master    
+  steps:
+    - name: clone-repo
+      image: alpine/git
+      env:
+        - name: REPOSITORY
+          value: $(inputs.params.repository)
+        - name: REVISION
+          value: $(inputs.params.revision)
+      command: ["/bin/sh", "-c"]
+      args:
+        - set -e -o pipefail;
+          echo "Cloning $REPOSITORY";
+          git clone -q -b $REVISION $REPOSITORY /pipeline/repo;
+      volumeMounts:
+        - mountPath: /pipeline
+          name: pipeline-volume
+  volumes:
+    - name: pipeline-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.pipeline-pvc)
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-task
+spec:
+  inputs:
+    params:
+      - name: pipeline-pvc
+        description: the output pvc
       - name: apikey
         description: the ibmcloud api key
       - name: api
@@ -27,18 +55,6 @@ spec:
       - name: registryRegion
         description: the ibmcloud registry region        
   steps:
-    - name: clone-repo
-      image: alpine/git
-      env:
-        - name: REPOSITORY
-          value: $(inputs.params.repository)
-        - name: REVISION
-          value: $(inputs.params.revision)
-      command: ["/bin/sh", "-c"]
-      args:
-        - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
-          git clone -q -b $REVISION $REPOSITORY .;
     - name: pre-build-check
       image: ibmcom/pipeline-base-image
       env:
@@ -57,12 +73,13 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
+          cp -r /pipeline/repo/ .
           ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           source pre-build-check.sh;
       volumeMounts:
-        - mountPath: /step-mount
-          name: task-volume
+        - mountPath: /pipeline
+          name: pipeline-volume
     - name: build-docker-image
       image: ibmcom/pipeline-base-image
       env:
@@ -79,7 +96,7 @@ spec:
         - name: IMAGE_NAME
           value: $(inputs.params.imageName)
         - name: ARCHIVE_DIR
-          value: "/artifacts"
+          value: "/pipeline/artifacts"
         - name: BUILD_NUMBER
           value: "0"
         - name: GIT_BRANCH
@@ -93,12 +110,12 @@ spec:
           export REGISTRY_URL=$(ibmcloud cr info | sed "2q;d" | awk '{for(i=1;i<=NF;i++) if ($i=="Registry") print $(i+1)}');
           source build-docker-image.sh;
       volumeMounts:
-        - mountPath: /artifacts
-          name: task-volume
+        - mountPath: /pipeline
+          name: pipeline-volume
   volumes:
-    - name: task-volume
+    - name: pipeline-volume
       persistentVolumeClaim:
-        claimName: $(inputs.params.task-pvc)
+        claimName: $(inputs.params.pipeline-pvc)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -107,33 +124,14 @@ metadata:
 spec:
   inputs:
     params:
-      - name: task-pvc
+      - name: pipeline-pvc
         description: the task pvc
-      - name: repository
-        description: the git repo
-      - name: revision
-        description: the revision
-        default: master
       - name: apikey
         description: the ibmcloud api key
       - name: api
         description: the ibmcloud api endpoint
-        default: "https://cloud.ibm.com"
-      - name: registryRegion
-        description: the ibmcloud registry region           
+        default: "https://cloud.ibm.com"       
   steps:
-    - name: clone-repo
-      image: alpine/git
-      env:
-        - name: REPOSITORY
-          value: $(inputs.params.repository)
-        - name: REVISION
-          value: $(inputs.params.revision)
-      command: ["/bin/sh", "-c"]
-      args:
-        - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
-          git clone -q -b $REVISION $REPOSITORY .;
     - name: check-vulnerabilities
       image: ibmcom/pipeline-base-image
       env:
@@ -143,22 +141,21 @@ spec:
           value: $(inputs.params.api)
         - name: HOME
           value: "/root"
-        - name: REGION
-          value: $(inputs.params.registryRegion)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
+          cp -r /pipeline/repo/ .
+          cp /pipeline/artifacts/build.properties .;
           while read line; do export $line; done < /artifacts/build.properties;
-          cp /artifacts/build.properties .;
+          ibmcloud login -a $API -r $REGION;
           source check-vulnerabilities.sh || true;
       volumeMounts:
-        - mountPath: /artifacts
-          name: task-volume
+        - mountPath: /pipeline
+          name: pipeline-volume
   volumes:
-    - name: task-volume
+    - name: pipeline-volume
       persistentVolumeClaim:
-        claimName: $(inputs.params.task-pvc)
+        claimName: $(inputs.params.pipeline-pvc)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
@@ -167,7 +164,7 @@ metadata:
 spec:
   inputs:
     params:
-      - name: task-pvc
+      - name: pipeline-pvc
         description: the task pvc
       - name: repository
         description: the git repo
@@ -188,18 +185,6 @@ spec:
       - name: clusterRegion
         description: The IBM Cloud Kubernetes cluster region
   steps:
-    - name: clone-repo
-      image: alpine/git
-      env:
-        - name: REPOSITORY
-          value: $(inputs.params.repository)
-        - name: REVISION
-          value: $(inputs.params.revision)
-      command: ["/bin/sh", "-c"]
-      args:
-        - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
-          git clone -q -b $REVISION $REPOSITORY .;
     - name: pre-deploy-check
       image: ibmcom/pipeline-base-image
       env:
@@ -220,14 +205,15 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
+          cp -r /pipeline/repo/ .
+          cp /pipeline/artifacts/build.properties .;
+          while read line; do export $line; done < build.properties;
           ibmcloud login -a $API -r $REGION;
           $(ibmcloud ks cluster config --cluster "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --export);
-          while read line; do export $line; done < /artifacts/build.properties;
-          cp /artifacts/build.properties .;
           source pre-deploy-check.sh;
       volumeMounts:
-        - mountPath: /artifacts
-          name: task-volume
+        - mountPath: /pipeline
+          name: pipeline-volume
     - name: deploy-to-kubernetes
       image: ibmcom/pipeline-base-image
       env:
@@ -248,16 +234,12 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
+          while read line; do export $line; done < build.properties;
           ibmcloud login -a $API -r $REGION;
           $(ibmcloud ks cluster config --cluster "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --export);
-          while read line; do export $line; done < /artifacts/build.properties;
-          cp /artifacts/build.properties .;
           source deploy-to-kubernetes.sh;
-      volumeMounts:
-        - mountPath: /artifacts
-          name: task-volume
   volumes:
-    - name: task-volume
+    - name: pipeline-volume
       persistentVolumeClaim:
-        claimName: $(inputs.params.task-pvc)
+        claimName: $(inputs.params.pipeline-pvc)
       
