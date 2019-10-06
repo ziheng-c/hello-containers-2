@@ -7,11 +7,6 @@ spec:
     params:
       - name: pipeline-pvc
         description: the task pvc
-      - name: repository
-        description: the git repo
-      - name: revision
-        description: the revision
-        default: master
       - name: apikey
         description: the ibmcloud api key
       - name: api
