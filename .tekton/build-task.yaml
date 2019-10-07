@@ -45,6 +45,8 @@ spec:
       volumeMounts:
         - mountPath: /pipeline
           name: pipeline-volume
+        - mountPath: /pipeline2
+          name: pipeline-volume
     - name: build-docker-image
       image: ibmcom/pipeline-base-image
       env:
