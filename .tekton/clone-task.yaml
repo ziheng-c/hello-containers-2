@@ -38,7 +38,7 @@ spec:
         - set -e -o pipefail;
           if [ ! -z $USERNAME ]; then
           export USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
-          REPOSITORY=$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
+          REPOSITORY=https://$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
           git config --global url."https://${USERPASS}@".insteadOf "https://";
           fi;
           echo "Cloning $REPOSITORY";
