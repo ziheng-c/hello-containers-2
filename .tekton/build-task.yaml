@@ -84,3 +84,6 @@ spec:
     - name: pipeline-volume
       persistentVolumeClaim:
         claimName: $(inputs.params.pipeline-pvc)
+    - name: pipeline-volume2
+      persistentVolumeClaim:
+        claimName: $(inputs.params.pipeline-pvc)
