@@ -8,8 +8,14 @@ spec:
       - name: repository
         description: the git repo
       - name: revision
-        description: the revision
-        default: master  
+        description: the git revision
+        default: master
+      - name: username
+        description: the git username
+        default: ""
+      - name: password
+        description: the git password
+        default: ""
       - name: pvc-name
         description: the output pvc
       - name: pvc-sub-path
@@ -26,7 +32,12 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
+          if [! -z $USERNAME ]; then
+          USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
+          REPOSITORY=$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
           echo "Cloning $REPOSITORY";
+          git config --global url."https://${USERPASS}@".insteadOf "https://";
+          fi;
           git clone -q -b $REVISION $REPOSITORY /dest;
       volumeMounts:
         - mountPath: /dest
