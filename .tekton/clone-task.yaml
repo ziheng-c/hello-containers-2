@@ -12,10 +12,10 @@ spec:
         default: master
       - name: username
         description: the git username
-        default: "test"
+        default: ""
       - name: password
         description: the git password
-        default: "pass"
+        default: ""
       - name: pvc-name
         description: the output pvc
       - name: pvc-sub-path
@@ -37,10 +37,9 @@ spec:
       args:
         - set -e -o pipefail;
           if [ ! -z $USERNAME ]; then
-          export USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
-          REPOSITORY=https://$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
-          git config --global url."https://${USERPASS}@".insteadOf "https://";
-          echo "Userpass $USERPASS";
+            USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
+            REPOSITORY=https://$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
+            git config --global url."https://${USERPASS}@".insteadOf "https://";
           fi;
           echo "Cloning $REPOSITORY";
           git clone -q -b $REVISION $REPOSITORY /dest;
