@@ -29,6 +29,10 @@ spec:
           value: $(inputs.params.repository)
         - name: REVISION
           value: $(inputs.params.revision)
+        - name: USERNAME
+          value: $(inputs.params.username)
+        - name: PASSWORD
+          value: $(inputs.params.password)
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
