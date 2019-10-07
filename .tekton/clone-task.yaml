@@ -33,11 +33,11 @@ spec:
       args:
         - set -e -o pipefail;
           if [ ! -z $USERNAME ]; then
-          USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
+          export USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
           REPOSITORY=$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
-          echo "Cloning $REPOSITORY";
           git config --global url."https://${USERPASS}@".insteadOf "https://";
           fi;
+          echo "Cloning $REPOSITORY";
           git clone -q -b $REVISION $REPOSITORY /dest;
       volumeMounts:
         - mountPath: /dest
