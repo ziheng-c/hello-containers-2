@@ -38,8 +38,8 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ls -al /pipeline
-          ls -al /pipeline2/repo
+          ls -al /pipeline;
+          ls -al /pipeline2/repo;
           cp -r /pipeline/repo/* .;
           ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
