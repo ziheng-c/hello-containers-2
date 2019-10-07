@@ -32,7 +32,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
-          if [! -z $USERNAME ]; then
+          if [ ! -z $USERNAME ]; then
           USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
           REPOSITORY=$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
           echo "Cloning $REPOSITORY";
