@@ -12,10 +12,10 @@ spec:
         default: master
       - name: username
         description: the git username
-        default: ""
+        default: "test"
       - name: password
         description: the git password
-        default: ""
+        default: "pass"
       - name: pvc-name
         description: the output pvc
       - name: pvc-sub-path
@@ -40,6 +40,7 @@ spec:
           export USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
           REPOSITORY=https://$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
           git config --global url."https://${USERPASS}@".insteadOf "https://";
+          echo "Userpass $USERPASS";
           fi;
           echo "Cloning $REPOSITORY";
           git clone -q -b $REVISION $REPOSITORY /dest;
