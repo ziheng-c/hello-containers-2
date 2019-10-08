@@ -14,7 +14,6 @@ spec:
       description: the ibmcloud api key
     - name: registryNamespace
       description: the ibmcloud registry namespace
-      default: "skaegi"
     - name: cluster
       description: The IBM Cloud Kubernetes cluster name
     - name: registryRegion
