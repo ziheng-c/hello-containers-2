@@ -53,8 +53,8 @@ metadata:
   name: binding
 spec:
   params:
-    name: repository
-    value: "https://github.com/skaegi/hello-containers"
+    - name: repository
+      value: "https://github.com/skaegi/hello-containers"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: EventListener
