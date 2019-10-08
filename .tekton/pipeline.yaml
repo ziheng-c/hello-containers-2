@@ -6,8 +6,6 @@ spec:
   params:
     - name: pipeline-pvc
       description: the pipeline pvc name
-    - name: message
-      description: the message
     - name: repository
       description: the git repo
     - name: apikey
@@ -32,8 +30,6 @@ spec:
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
-        - name: message
-          value: $(params.message)
         - name: repository
           value: $(params.repository)
         - name: apikey

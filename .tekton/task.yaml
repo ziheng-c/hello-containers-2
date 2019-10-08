@@ -7,8 +7,6 @@ spec:
     params:
       - name: task-pvc
         description: the output pvc
-      - name: message
-        description: the message
       - name: repository
         description: the git repo
       - name: revision
