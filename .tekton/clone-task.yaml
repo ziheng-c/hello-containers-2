@@ -36,6 +36,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
+          echo howard yay;
           if [ ! -z $USERNAME ]; then
             USERPASS=${USERNAME}$([ ! -z $PASSWORD ] && echo ":$PASSWORD" || echo "");
             REPOSITORY=https://$(echo $REPOSITORY | sed 's/^.*:\/\///' | sed 's/^.*@//');
