@@ -59,7 +59,7 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: listener-dublin
+  name: listener-dublinn
 spec:
   triggers:
     - binding:
