@@ -1,3 +1,3 @@
-1 Sample application packaged as a container
+Sample application packaged as a container
 
 
